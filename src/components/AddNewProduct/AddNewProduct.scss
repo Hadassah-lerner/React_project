@@ -1,0 +1,95 @@
+.add-form-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: #f9f4ef;
+  min-height: 100vh;
+}
+
+.add-form-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  text-align: center;
+}
+
+.add-form-card__close {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.add-form-card__title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.add-form-card__image {
+  max-width: 80%;
+  max-height: 200px;
+  object-fit: contain;
+  margin: 1rem auto;
+}
+
+.add-form-card__field {
+  margin-bottom: 1.2rem;
+  text-align: right;
+
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    font-size: 1rem;
+  }
+}
+
+.add-form-card__summary {
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+
+  p {
+    margin: 0.25rem 0;
+  }
+
+  strong {
+    color: #444;
+  }
+}
+
+.add-form-card__submit {
+  background-color: #a00050;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #870044;
+  }
+}
+
+.add-form-card__error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}

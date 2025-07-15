@@ -1,0 +1,98 @@
+.personal-info-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 50px 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  background: #faf7f5;
+}
+
+.personal-info-form-box {
+  width: 400px;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0px -6px 10px white, 0px 4px 15px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(to bottom, #faf7f5, #faf7f5);
+  text-align: center;
+}
+
+body {
+  font-family: sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background: #faf7f5;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.personal-info-form-box h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #868686;
+  letter-spacing: 3px;
+}
+
+.personal-info-form-box form label {
+  margin: 10px 0 0 20px;
+  font-weight: 300;
+  color: #868686;
+  display: block;
+  text-align: right;
+}
+
+.personal-info-form-box form label#forgotpwd {
+  margin: 20px;
+  display: block;
+  text-align: center;
+  font-size: 18px;
+}
+
+.personal-info-form-box form label#forgotpwd a {
+  font-weight: 600;
+  color: #868686;
+}
+
+.personal-info-form-box form input[type="text"],
+.personal-info-form-box form input[type="password"],
+.personal-info-form-box form input[type="button"],
+.personal-info-form-box form input[type="submit"] {
+  width: 100%;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  box-shadow: 0px -6px 10px white, 0px 4px 15px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  color: #868686;
+}
+
+.personal-info-form-box form input:focus {
+  box-shadow: inset 0px -6px 10px white, inset 0px 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.personal-info-form-box form input[type="button"],
+.personal-info-form-box form input[type="submit"] {
+  margin-top: 40px;
+  font-size: 24px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.personal-info-form-box form input[type="submit"]:active {
+  box-shadow: inset 0px -6px 10px white, inset 0px 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.text-danger {
+  color: red;
+  font-size: 13px;
+  margin-top: -15px;
+  margin-bottom: 15px;
+  text-align: right;
+}
