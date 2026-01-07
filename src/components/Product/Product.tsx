@@ -2,14 +2,15 @@ import React, { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateProduct } from '../../apis/apis';
 import './Product.scss';
+import { ProductModel } from '../../models/ProductModel';
 
-interface ProductModel {
+/*interface ProductModel {
   id: string; // תמיד string
   name: string;
   category: string;
   price: number;
   image: string;
-}
+}*/
 
 const Product: FC = () => {
   const { id } = useParams<{ id: string }>();
