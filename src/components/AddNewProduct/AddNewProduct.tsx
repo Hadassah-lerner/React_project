@@ -6,13 +6,14 @@ import './AddNewProduct.scss';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import { addProduct as apiAddProduct } from '../../apis/apis';
+import { ProductModel } from '../../models/ProductModel';
 
-interface ProductFormValues {
+/*interface ProductFormValues {
   name: string;
   category: string;
   price: number;
   image: string;
-}
+}*/
 
 const AddNewProduct: FC = () => {
   const navigate = useNavigate();
