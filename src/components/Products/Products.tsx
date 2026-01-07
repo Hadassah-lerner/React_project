@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import { ProductModel } from '../../models/ProductModel';
-import { api } from '../../api/apis';
+import { getProducts, deleteProductById } from '../../api/apis';
 import './Products.scss';
 
 const Products: FC = () => {
@@ -12,7 +12,9 @@ const Products: FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await api.getProducts();
+        const data = await getProducts();
+        await deleteProductById(id);
+        //const data = await api.getProducts();
         setProducts(data);
       } catch (err) {
         console.error(err);
