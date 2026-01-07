@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
+import { api } from '../../api/apis';
 
 interface SignUpProps {}
 
@@ -54,14 +55,14 @@ const SignUp: FC<SignUpProps> = () => {
           password: values.password,
           role: "customer"
         };
-
-        const response = await fetch(`http://localhost:3000/users`, {
+const response = await api.signUp(newCustomer);
+       /* const response = await fetch(`http://localhost:3000/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newCustomer),
-        });
+        });*/
 
         if (!response.ok) {
           throw new Error("נכשלה ההרשמה");
