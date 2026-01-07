@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { currUser } from '../../redux/slices/userSlice';
-import { api } from '../../api/apis';
+import { updateUser } from '../../api/apis';
 import './PersonalInfo.scss';
 
 const PersonalInfo: FC = () => {
@@ -24,7 +24,7 @@ const PersonalInfo: FC = () => {
 
   const handleSave = async () => {
     try {
-      const updatedUser = await api.updateUser(user.id, formData);
+     const updatedUser = await updateUser(user.id, formData);
       dispatch(currUser(updatedUser));
       setEditable(false);
     } catch {
