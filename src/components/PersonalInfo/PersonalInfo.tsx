@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { currUser } from '../../redux/slices/userSlice';
+import { api } from '../../api/apis';
 
 interface PersonalInfoProps {}
 
@@ -57,13 +58,14 @@ const PersonalInfo: FC = () => {
           role: user?.role || 'customer',
         };
 
-        const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+       /* const response = await fetch(`http://localhost:3000/users/${user.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newCustomer),
-        });
+        });*/
+        const response = await api.signUp(newCustomer);
 
         if (!response.ok) {
           throw new Error("נכשלה ההרשמה");
