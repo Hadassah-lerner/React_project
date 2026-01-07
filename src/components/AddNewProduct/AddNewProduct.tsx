@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import './AddNewProduct.scss';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
-import { addProduct as apiAddProduct } from '../../api/apis';
+import { addProduct as apiAddProduct } from '../../apis/apis';
 
 const AddNewProduct: FC = () => {
   const navigate = useNavigate();
