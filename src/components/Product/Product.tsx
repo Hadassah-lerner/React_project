@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api } from '../../api/apis';
+import { getProductById, updateProduct } from '../../api/apis';
 import './Product.scss';
 
 interface Product {
@@ -18,6 +18,8 @@ const Product: FC = () => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState({ name: '', category: '', price: 0, image: '' });
   const [error, setError] = useState('');
+  const fetched = await getProductById(id);
+  const updated = await updateProduct(product.id, formData);
 
   useEffect(() => {
     const fetchProduct = async () => {
