@@ -65,7 +65,7 @@ const PersonalInfo: FC = () => {
           },
           body: JSON.stringify(newCustomer),
         });*/
-        const response = await api.signUp(newCustomer);
+        const response = await api.updateUser(newCustomer);
 
         if (!response.ok) {
           throw new Error("נכשלה ההרשמה");
