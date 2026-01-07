@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import { UserModel } from '../../models/UserModel';
 import { currUser } from '../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
+import { api } from '../../api/apis';
 
 const LogIn: FC = () => {
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ const LogIn: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-      const response = await fetch(`http://localhost:3000/users?email=${values.email}`);
+      //const response = await fetch(`http://localhost:3000/users?email=${values.email}`);
+      const response = await api.getUserByEmail(values.email);
 const users = await response.json();
 
 if (users.length == 0) {
