@@ -26,7 +26,12 @@ const SignUp: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-       const createdUser = await addUser({ ... });
+     const createdUser = await addUser({
+  name: values.name,
+  email: values.email,
+  password: values.password,
+  role: 'customer',
+});
         dispatch(currUser(createdUser));
         navigate('/');
       } catch {
