@@ -1,3 +1,4 @@
+// src/components/LogIn/LogIn.tsx
 import React, { FC, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -6,6 +7,15 @@ import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
 import { getUserByEmail } from '../../apis/apis';
 import './LogIn.scss';
+
+// טיפוס המודל שה־Redux מצפה לו
+interface UserModel {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  password: string;
+}
 
 const LogIn: FC = () => {
   const navigate = useNavigate();
@@ -23,16 +33,29 @@ const LogIn: FC = () => {
     onSubmit: async (values) => {
       try {
         const users = await getUserByEmail(values.email);
+
         if (!users.length) {
           setError("המשתמש לא קיים במערכת, יש להרשם");
           setTimeout(() => navigate('/sign_up'), 2000);
           return;
         }
-        const user = users[0];
-        if (user.password !== values.password) {
+
+        const userFromApi = users[0];
+
+        if (userFromApi.password !== values.password) {
           setError("הסיסמה שגויה");
           return;
         }
+
+        // המרה ל־UserModel
+        const user: UserModel = {
+          id: userFromApi.id.toString(), // תמיד string
+          name: userFromApi.name,
+          email: userFromApi.email,
+          role: userFromApi.role,
+          password: userFromApi.password,
+        };
+
         sessionStorage.setItem('my-token', 'smile');
         dispatch(currUser(user));
         navigate('/home');
@@ -47,6 +70,7 @@ const LogIn: FC = () => {
       <div className="form">
         <form onSubmit={formik.handleSubmit}>
           <h1>Login</h1>
+
           <label>כתובת מייל</label>
           <input {...formik.getFieldProps('email')} />
           {formik.touched.email && formik.errors.email && <div className="text-danger">{formik.errors.email}</div>}
