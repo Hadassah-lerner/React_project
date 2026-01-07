@@ -1,3 +1,4 @@
+// src/components/DeleteProduct/DeleteProduct.tsx
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
@@ -12,15 +13,12 @@ const DeleteProduct: FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts();
-        // כאן אנחנו מוודאים שה-id הוא string (כמו שה־API מחזיר)
-        const parsedData: ProductModel[] = data.map((p: any) => ({
-          ...p,
-          id: p.id.toString(),
-        }));
-        setProducts(parsedData);
+        const data: ProductModel[] = await getProducts();
+        // המרה לכל id כ-string אם צריך
+        const fixedData = data.map(p => ({ ...p, id: p.id.toString() }));
+        setProducts(fixedData);
       } catch (err) {
-        console.error('שגיאה בשליפת מוצרים:', err);
+        console.error(err);
       }
     };
     fetchProducts();
@@ -28,8 +26,8 @@ const DeleteProduct: FC = () => {
 
   const deleteProductHandler = async (id: string) => {
     try {
-      await deleteProductById(id);
-    setProducts(prev => prev.filter(p => p.id !== Number(id)));
+      await deleteProductById(id); // id תמיד string
+      setProducts(prev => prev.filter(p => p.id !== id));
       dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
     } catch (err) {
       console.error('שגיאה במחיקת מוצר:', err);
@@ -58,7 +56,7 @@ const DeleteProduct: FC = () => {
               <td>{p.category}</td>
               <td>₪{p.price}</td>
               <td>
-                <button onClick={() => deleteProductHandler(p.id.toString())}>מחק</button>
+                <button onClick={() => deleteProductHandler(p.id)}>מחק</button>
               </td>
             </tr>
           ))}
