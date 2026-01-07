@@ -1,10 +1,11 @@
-import React, { FC, useState, useEffect } from 'react';
+// src/components/Product/Product.tsx
+import React, { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateProduct } from '../../apis/apis';
 import './Product.scss';
 
-interface Product {
-  id: string;
+interface ProductModel {
+  id: string;       // תמיד string
   name: string;
   category: string;
   price: number;
@@ -14,7 +15,7 @@ interface Product {
 const Product: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ProductModel | null>(null);
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState({ name: '', category: '', price: 0, image: '' });
   const [error, setError] = useState('');
@@ -23,7 +24,7 @@ const Product: FC = () => {
     const fetchProduct = async () => {
       if (!id) return;
       try {
-        const fetched = await getProductById(id);
+        const fetched: ProductModel = await getProductById(id);
         setProduct(fetched);
         setFormData(fetched);
       } catch {
