@@ -6,7 +6,7 @@ import { useFetch } from '../../custom_hook/useFetch';
 import { clearProduct } from '../../redux/slices/productSlice';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import './DeleteProduct.scss';
-import { api } from '../../api/apis';
+import { api } from '../../apis/apis';
 
 
 const Products: FC = () => {
