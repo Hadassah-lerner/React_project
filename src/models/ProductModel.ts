@@ -1,12 +1,12 @@
 export class ProductModel { 
-  id!: number;
+  id!: string; ;
   name!: string;
   category!: string;
   price!: number;
   image!: string;
 
   constructor() {
-  this.id = 0
+  this.id = ''
   this.name = ''
   this.category = ''
   this.price = 0
