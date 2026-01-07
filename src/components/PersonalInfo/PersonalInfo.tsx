@@ -6,7 +6,7 @@ import { updateUser } from '../../apis/apis';
 import './PersonalInfo.scss';
 
 const PersonalInfo: FC = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.userState);
   const dispatch = useDispatch();
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '' });
@@ -25,7 +25,7 @@ const PersonalInfo: FC = () => {
   const handleSave = async () => {
     if (!user) return;
     try {
-      const updatedUser = await updateUser(user.id.toString(), formData);
+      const updatedUser = await updateUser(user.id, formData);
       dispatch(currUser(updatedUser));
       setEditable(false);
     } catch {
