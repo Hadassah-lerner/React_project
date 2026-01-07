@@ -60,24 +60,32 @@ const SignUp: FC = () => {
 );
 
 
-        // המרה ל־UserModel
-        const createdUser: UserModel = {
-          id: createdUserFromApi.id.toString(), // תמיד string
-          name: createdUserFromApi.name,
-          email: createdUserFromApi.email,
-          password: createdUserFromApi.password,
-          role: createdUserFromApi.role,
-        };
+       onSubmit: async (values) => {
+  try {
+    const createdUserFromApi = await addUser({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      role: 'customer',
+    });
 
-        dispatch(currUser(createdUser));
-        sessionStorage.setItem('my-token', 'smile');
-        navigate('/home');
-      } catch (err) {
-        console.error(err);
-        setError("אירעה שגיאה בהרשמה, נסה שוב");
-      }
-    },
-  });
+    const createdUser = new UserModel(
+      createdUserFromApi.id.toString(),
+      createdUserFromApi.name,
+      createdUserFromApi.email,
+      createdUserFromApi.password,
+      createdUserFromApi.role ?? 'customer'
+    );
+
+    dispatch(currUser(createdUser));
+    sessionStorage.setItem('my-token', 'smile');
+    navigate('/home');
+
+  } catch (err) {
+    console.error(err);
+    setError("אירעה שגיאה בהרשמה, נסה שוב");
+  }
+}
 
   return (
     <div className="container">
