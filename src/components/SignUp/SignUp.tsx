@@ -6,15 +6,16 @@ import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
 import { addUser } from '../../apis/apis';
 import './SignUp.scss';
+import { UserModel } from '../../models/UserModel';
 
 // טיפוס המשתמש שה־Redux מצפה לו
-interface UserModel {
+/*interface UserModel {
   id: string;
   name: string;
   email: string;
   password: string;
   role: string;
-}
+}*/
 
 const SignUp: FC = () => {
   const navigate = useNavigate();
@@ -44,12 +45,20 @@ const SignUp: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const createdUserFromApi = await addUser({
+ /*       const createdUserFromApi = await addUser({
           name: values.name,
           email: values.email,
           password: values.password,
           role: 'customer',
-        });
+        });*/
+        const createdUser = new UserModel(
+  createdUserFromApi.id.toString(),
+  createdUserFromApi.name,
+  createdUserFromApi.email,
+  createdUserFromApi.password,
+  createdUserFromApi.role ?? 'customer'
+);
+
 
         // המרה ל־UserModel
         const createdUser: UserModel = {
