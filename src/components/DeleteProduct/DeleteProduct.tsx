@@ -1,4 +1,3 @@
-// src/components/DeleteProduct/DeleteProduct.tsx
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
@@ -13,12 +12,15 @@ const DeleteProduct: FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data: ProductModel[] = await getProducts();
-        // המרה לכל id כ-string אם צריך
-        const fixedData = data.map(p => ({ ...p, id: p.id.toString() }));
+        const data = await getProducts(); // מקבל Product[] עם id:number
+        // המרה לכל id ל-string כדי להתאים ל-ProductModel
+        const fixedData: ProductModel[] = data.map(p => ({
+          ...p,
+          id: p.id.toString(),
+        }));
         setProducts(fixedData);
       } catch (err) {
-        console.error(err);
+        console.error('שגיאה בטעינת מוצרים:', err);
       }
     };
     fetchProducts();
@@ -26,7 +28,7 @@ const DeleteProduct: FC = () => {
 
   const deleteProductHandler = async (id: string) => {
     try {
-      await deleteProductById(id); // id תמיד string
+      await deleteProductById(id); // deleteProductById מקבל string
       setProducts(prev => prev.filter(p => p.id !== id));
       dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
     } catch (err) {
