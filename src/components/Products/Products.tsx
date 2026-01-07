@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import { ProductModel } from '../../models/ProductModel';
-import { getProducts, deleteProductById } from '../../api/apis';
+import { getProducts, deleteProductById } from '../../apis/apis';
 import './Products.scss';
 
 const Products: FC = () => {
