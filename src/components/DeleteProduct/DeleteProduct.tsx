@@ -29,7 +29,7 @@ const DeleteProduct: FC = () => {
   const deleteProductHandler = async (id: string) => {
     try {
       await deleteProductById(id);
-      setProducts(prev => prev.filter(p => p.id !== id));
+    setProducts(prev => prev.filter(p => p.id !== Number(id)));
       dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
     } catch (err) {
       console.error('שגיאה במחיקת מוצר:', err);
