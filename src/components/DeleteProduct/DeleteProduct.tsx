@@ -26,7 +26,7 @@ useEffect(() => {
 
   const deleteProduct = async (product: ProductModel) => {
     try {
-      const response = await deleteProductById(product.id);
+      const response = await deleteProductById(product.id.toString());
      /*   fetch(`http://localhost:3000/products/${product.id}`, {
         method: 'DELETE',
       });*/
