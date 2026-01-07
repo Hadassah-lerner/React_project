@@ -2,10 +2,10 @@
 
 // כתובת בסיס לשרת
 // בלוקאלי:
-const BASE_URL = "http://localhost:3001";
+//const BASE_URL = "http://localhost:3001";
 
 // ב-AWS:
-// const BASE_URL = "https://your-aws-server-url";
+ const BASE_URL = "https://13.48.55.220:3001";
 
 /* ===================== PRODUCTS ===================== */
 
