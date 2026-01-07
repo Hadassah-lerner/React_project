@@ -25,7 +25,13 @@ const PersonalInfo: FC = () => {
   const handleSave = async () => {
     if (!user) return;
     try {
-      const updatedUser = await updateUser(user.id, formData);
+   const updatedUser = await updateUser(user.id, {
+  name: formData.name,
+  email: formData.email,
+  password: user.password, // הסיסמה הקיימת
+  role: user.role,         // התפקיד הקיים
+});
+
       dispatch(currUser(updatedUser));
       setEditable(false);
     } catch {
