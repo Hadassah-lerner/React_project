@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/store';
 import { currUser } from '../../redux/slices/userSlice';
+import { RootState } from '../../redux/store';
 import { updateUser } from '../../apis/apis';
 import './PersonalInfo.scss';
 
@@ -23,8 +23,9 @@ const PersonalInfo: FC = () => {
   };
 
   const handleSave = async () => {
+    if (!user) return;
     try {
-     const updatedUser = await updateUser(user.id, formData);
+      const updatedUser = await updateUser(user.id.toString(), formData);
       dispatch(currUser(updatedUser));
       setEditable(false);
     } catch {
@@ -41,22 +42,12 @@ const PersonalInfo: FC = () => {
 
       <div className="personal-info-field">
         <label>שם:</label>
-        <input
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          disabled={!editable}
-        />
+        <input name="name" value={formData.name} onChange={handleChange} disabled={!editable} />
       </div>
 
       <div className="personal-info-field">
         <label>מייל:</label>
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          disabled={!editable}
-        />
+        <input name="email" value={formData.email} onChange={handleChange} disabled={!editable} />
       </div>
 
       {editable ? (
