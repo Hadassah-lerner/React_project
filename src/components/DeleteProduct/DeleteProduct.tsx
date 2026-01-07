@@ -12,8 +12,10 @@ const DeleteProduct: FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts(); // Product[] עם id:number
-        setProducts(data); // אין המרה, נשאר מספר
+        const data: ProductModel[] = await getProducts();
+        // המרה ל־string לכל id כדי שתואם ל־ProductModel
+        const fixedData = data.map(p => ({ ...p, id: p.id.toString() }));
+        setProducts(fixedData);
       } catch (err) {
         console.error('שגיאה בטעינת מוצרים:', err);
       }
@@ -21,9 +23,9 @@ const DeleteProduct: FC = () => {
     fetchProducts();
   }, []);
 
-  const deleteProductHandler = async (id: number) => {
+  const deleteProductHandler = async (id: string) => {
     try {
-      await deleteProductById(id.toString()); // המרה ל-string רק לקריאה ל-API
+      await deleteProductById(id); // id כבר string
       setProducts(prev => prev.filter(p => p.id !== id));
       dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
     } catch (err) {
