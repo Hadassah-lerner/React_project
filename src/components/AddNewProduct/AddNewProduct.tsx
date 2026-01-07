@@ -12,13 +12,10 @@ const AddNewProduct: FC = () => {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const validationSchema = yup.object({
+  const validationSchema = yup.object().shape({
     name: yup.string().required('יש להזין שם'),
     category: yup.string().required('יש להזין קטגוריה'),
-    price: yup
-      .number()
-      .typeError('יש להזין מספר חוקי')
-      .required('יש להזין מחיר'),
+    price: yup.number().typeError('יש להזין מספר חוקי').required('יש להזין מחיר'),
     image: yup.string().required('יש להכניס תמונה'),
   });
 
@@ -28,7 +25,7 @@ const AddNewProduct: FC = () => {
     onSubmit: async (values) => {
       try {
         const createdProduct = await apiAddProduct(values);
-        dispatch(setMessage('המוצר נוסף לרשימת המוצרים'));
+        dispatch(setMessage("המוצר נוסף לרשימת המוצרים"));
         navigate('/products');
       } catch {
         setErrorMessage('אירעה שגיאה בהכנסת המוצר, נסה שוב');
@@ -39,27 +36,11 @@ const AddNewProduct: FC = () => {
   return (
     <div className="add-form-page" dir="rtl">
       <form className="add-form-card" onSubmit={formik.handleSubmit}>
-        <button
-          type="button"
-          className="add-form-card__close"
-          onClick={() => navigate('/products')}
-        >
-          ✕
-        </button>
-        <h2 className="add-form-card__title">
-          {formik.values.name || 'מוצר חדש'}
-        </h2>
+        <button type="button" className="add-form-card__close" onClick={() => navigate('/products')}>✕</button>
+        <h2 className="add-form-card__title">{formik.values.name || 'מוצר חדש'}</h2>
 
-        {/* תצוגת תמונה */}
-        {formik.values.image && (
-          <img
-            src={formik.values.image as string}
-            alt="product"
-            className="add-form-card__image"
-          />
-        )}
-
-        {/* שדה תמונה */}
+        {/* תמונה */}
+        {formik.values.image && <img src={formik.values.image} alt="product" className="add-form-card__image" />}
         <div className="add-form-card__field">
           <label>תמונה:</label>
           <input
@@ -74,54 +55,42 @@ const AddNewProduct: FC = () => {
               }
             }}
           />
-          {formik.touched.image && formik.errors.image && (
-            <div className="add-form-card__error">{formik.errors.image}</div>
-          )}
+          {formik.touched.image && formik.errors.image && <div className="add-form-card__error">{formik.errors.image}</div>}
         </div>
 
-        {/* שדות טקסט */}
+        {/* שם */}
         <div className="add-form-card__field">
           <label>שם:</label>
           <input
-            type="text"
-            placeholder="שם המוצר"
             {...formik.getFieldProps('name')}
+            placeholder="שם המוצר"
           />
-          {formik.touched.name && formik.errors.name && (
-            <div className="add-form-card__error">{formik.errors.name}</div>
-          )}
+          {formik.touched.name && formik.errors.name && <div className="add-form-card__error">{formik.errors.name}</div>}
         </div>
 
+        {/* קטגוריה */}
         <div className="add-form-card__field">
           <label>קטגוריה:</label>
           <input
-            type="text"
-            placeholder="קטגוריה"
             {...formik.getFieldProps('category')}
+            placeholder="קטגוריה"
           />
-          {formik.touched.category && formik.errors.category && (
-            <div className="add-form-card__error">{formik.errors.category}</div>
-          )}
+          {formik.touched.category && formik.errors.category && <div className="add-form-card__error">{formik.errors.category}</div>}
         </div>
 
+        {/* מחיר */}
         <div className="add-form-card__field">
           <label>מחיר:</label>
           <input
+            {...formik.getFieldProps('price')}
             type="number"
             placeholder="מחיר"
-            {...formik.getFieldProps('price')}
           />
-          {formik.touched.price && formik.errors.price && (
-            <div className="add-form-card__error">{formik.errors.price}</div>
-          )}
+          {formik.touched.price && formik.errors.price && <div className="add-form-card__error">{formik.errors.price}</div>}
         </div>
 
-        <button type="submit" className="add-form-card__submit">
-          הוסף מוצר
-        </button>
-        {errorMessage && (
-          <div className="add-form-card__error">{errorMessage}</div>
-        )}
+        <button type="submit" className="add-form-card__submit">הוסף מוצר</button>
+        {errorMessage && <div className="add-form-card__error">{errorMessage}</div>}
       </form>
     </div>
   );
