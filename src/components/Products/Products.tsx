@@ -9,7 +9,6 @@ const Products: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
   const dispatch = useDispatch();
 
-  // שליפת מוצרים
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -19,26 +18,23 @@ const Products: FC = () => {
         console.error(err);
       }
     };
-
     fetchProducts();
   }, []);
 
-  // מחיקת מוצר
-  const deleteProductHandler = async (id: string) => {
+  const deleteProductHandler = async (id: string | number) => {
     try {
-      await deleteProductById(id);
+      await deleteProductById(id.toString()); // תמיד להמיר למחרוזת
       setProducts(prev => prev.filter(p => p.id !== id));
-      dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
+      dispatch(setMessage("המוצר נמחק מרשימת המוצרים"));
     } catch (err) {
       console.error(err);
-      alert('אירעה שגיאה במחיקת המוצר');
+      alert("אירעה שגיאה במחיקת המוצר");
     }
   };
 
   return (
     <div className="manage-products-container">
       <h1>המוצרים שלנו</h1>
-
       <table className="manage-products-table">
         <thead>
           <tr>
@@ -49,20 +45,15 @@ const Products: FC = () => {
             <th>פעולות</th>
           </tr>
         </thead>
-
         <tbody>
           {products.map(p => (
             <tr key={p.id}>
-              <td>
-                <img src={p.image} alt={p.name} width={60} />
-              </td>
+              <td><img src={p.image} alt={p.name} width={60} /></td>
               <td>{p.name}</td>
               <td>{p.category}</td>
               <td>₪{p.price}</td>
               <td>
-                <button onClick={() => deleteProductHandler(p.id)}>
-                  מחק
-                </button>
+                <button onClick={() => deleteProductHandler(p.id)}>מחק</button>
               </td>
             </tr>
           ))}
