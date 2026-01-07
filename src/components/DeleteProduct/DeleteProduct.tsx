@@ -7,32 +7,33 @@ import './DeleteProduct.scss';
 
 const DeleteProduct: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
-  const [loadingIds, setLoadingIds] = useState<string[]>([]); // אילו מוצרים בתהליך מחיקה
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        setProducts(data);
+        // כאן אנחנו מוודאים שה-id הוא string (כמו שה־API מחזיר)
+        const parsedData: ProductModel[] = data.map((p: any) => ({
+          ...p,
+          id: p.id.toString(),
+        }));
+        setProducts(parsedData);
       } catch (err) {
-        console.error(err);
+        console.error('שגיאה בשליפת מוצרים:', err);
       }
     };
     fetchProducts();
   }, []);
 
-  const deleteHandler = async (id: string) => {
+  const deleteProductHandler = async (id: string) => {
     try {
-      setLoadingIds(prev => [...prev, id]); // מתחילים להראות loading למוצר הזה
       await deleteProductById(id);
       setProducts(prev => prev.filter(p => p.id !== id));
-      dispatch(setMessage("המוצר נמחק מרשימת המוצרים"));
+      dispatch(setMessage('המוצר נמחק מרשימת המוצרים'));
     } catch (err) {
-      console.error(err);
-      alert("אירעה שגיאה במחיקת המוצר");
-    } finally {
-      setLoadingIds(prev => prev.filter(lid => lid !== id)); // מסירים את ה-spinner
+      console.error('שגיאה במחיקת מוצר:', err);
+      alert('אירעה שגיאה במחיקת המוצר');
     }
   };
 
@@ -50,25 +51,17 @@ const DeleteProduct: FC = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map(product => {
-            const isDeleting = loadingIds.includes(product.id);
-            return (
-              <tr key={product.id}>
-                <td><img src={product.image} alt={product.name} width={60} /></td>
-                <td>{product.name}</td>
-                <td>{product.category}</td>
-                <td>₪{product.price}</td>
-                <td>
-                  <button
-                    onClick={() => deleteHandler(product.id)}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? "מוחק..." : "מחק"}
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {products.map(p => (
+            <tr key={p.id}>
+              <td><img src={p.image} alt={p.name} width={60} /></td>
+              <td>{p.name}</td>
+              <td>{p.category}</td>
+              <td>₪{p.price}</td>
+              <td>
+                <button onClick={() => deleteProductHandler(p.id)}>מחק</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
