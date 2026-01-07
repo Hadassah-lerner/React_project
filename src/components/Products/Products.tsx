@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import { ProductModel } from '../../models/ProductModel';
 import { api } from '../../api/apis';
-import './DeleteProduct.scss';
+import './Products.scss';
 
 const Products: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
