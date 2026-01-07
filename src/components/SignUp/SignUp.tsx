@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
-import { api } from '../../api/apis';
+import { addUser } from '../../api/apis';
 import './SignUp.scss';
 
 const SignUp: FC = () => {
@@ -26,7 +26,7 @@ const SignUp: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const createdUser = await api.addUser({ name: values.name, email: values.email, password: values.password, role: "customer" });
+       const createdUser = await addUser({ ... });
         dispatch(currUser(createdUser));
         navigate('/');
       } catch {
