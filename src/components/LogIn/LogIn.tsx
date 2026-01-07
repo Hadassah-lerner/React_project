@@ -6,15 +6,16 @@ import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
 import { getUserByEmail } from '../../apis/apis';
 import './LogIn.scss';
+import { UserModel } from '../../models/UserModel';
 
 // טיפוס המודל שה־Redux מצפה לו
-interface UserModel {
+/*interface UserModel {
   id: string;
   name: string;
   email: string;
   role: string;
   password: string;
-}
+}*/
 
 const LogIn: FC = () => {
   const navigate = useNavigate();
