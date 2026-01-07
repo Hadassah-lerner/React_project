@@ -9,6 +9,7 @@ import { clearReview } from '../../redux/slices/reviewSlice';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
+import { api } from '../../api/apis';
 
 interface ProductProps { }
 
@@ -48,13 +49,14 @@ const Product: FC<ProductProps> = () => {
           comment: values.comment,
         };
 
-        const response = await fetch('http://localhost:3000/reviews', {
+        const response =  await api.addReview(review.id);
+          /*await fetch('http://localhost:3000/reviews', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(newReview),
-        });
+        });*/
 
         if (!response.ok) {
           throw new Error('שליחת חוות הדעת נכשלה');
@@ -92,9 +94,10 @@ const Product: FC<ProductProps> = () => {
 
   const deleteReview = async (review: ReviewModel) => {
     try {
-      const response = await fetch(`http://localhost:3000/reviews/${review.id}`, {
+      const response = await api.deleteProduct(product.id);
+       /* await fetch(`http://localhost:3000/reviews/${review.id}`, {
         method: 'DELETE',
-      });
+      });*/
 
       if (!response.ok) {
         throw new Error('מחיקת חוות הדעת נכשלה מהשרת');
