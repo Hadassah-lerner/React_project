@@ -1,16 +1,21 @@
-export class ProductModel { 
-  id!: string; ;
-  name!: string;
-  category!: string;
-  price!: number;
-  image!: string;
+export class ProductModel {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  image: string;
 
-  constructor() {
-  this.id = ''
-  this.name = ''
-  this.category = ''
-  this.price = 0
-  this.image = ''
+  constructor(
+    id: string | number,
+    name: string,
+    category: string,
+    price: number,
+    image: string
+  ) {
+    this.id = id.toString(); // תמיד string באפליקציה
+    this.name = name;
+    this.category = category;
+    this.price = price;
+    this.image = image;
   }
-
 }
