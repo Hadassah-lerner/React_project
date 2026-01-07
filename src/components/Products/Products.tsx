@@ -4,77 +4,85 @@ import { useNavigate } from 'react-router-dom';
 import { ProductModel } from '../../models/ProductModel';
 import { addProduct } from '../../redux/slices/shoppingCartSlice';
 import { useDispatch } from 'react-redux';
-import { useFetch } from '../../custom_hook/useFetch';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
+import { api } from '../../api/apis';
 
 const Products: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [category, setCategory] = useState<string>(''); // <-- קטגוריה נבחרת
+  const [category, setCategory] = useState<string>(''); // קטגוריה נבחרת
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // בניית URL דינמי עם קטגוריה ועמוד
-  const baseUrl = `http://localhost:3000/products?_page=${page}&_per_page=20${
-    category ? `&category=${category}` : ''
-  }`;
-
-  const { data, loading, error } = useFetch<{
-    data: ProductModel[];
-    pages: number;
-    items: number;
-  }>(baseUrl);
-
-  // כל פעם שהקטגוריה או הדאטה משתנה – נטען מחדש
+  // -------------------- פונקציה לטעינת מוצרים --------------------
   useEffect(() => {
-    if (data?.data) {
-      if (page == 1) {
-        setProducts(data.data); // איפוס אם זה עמוד ראשון
-      } else {
-        setProducts((prev) => [...prev, ...data.data]); // הוספה לעמודים קודמים
-      }
-    }
-  }, [data]);
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await api.getProducts(page, 20, category);
+        if (!response.ok) throw new Error('שגיאה בטעינת מוצרים');
+        const data: ProductModel[] = await response.json();
 
-  // טיפול בשינוי קטגוריה
+        if (page === 1) {
+          setProducts(data); // עמוד ראשון - איפוס המוצרים
+        } else {
+          setProducts(prev => [...prev, ...data]); // עמוד נוסף - הצמדה למוצרים קיימים
+        }
+
+        setError('');
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || 'שגיאה בטעינת מוצרים');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [page, category]);
+
+  // -------------------- שינוי קטגוריה --------------------
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
-    setPage(1); 
+    setPage(1); // איפוס עמוד כששינו קטגוריה
   };
 
+  // -------------------- טעינת עוד מוצרים --------------------
   const handleLoadMore = () => {
-    setPage((prev) => prev + 1);
+    setPage(prev => prev + 1);
   };
 
+  // -------------------- הוספה לעגלה --------------------
   const addToCart = (product: ProductModel) => {
     dispatch(addProduct(product));
     dispatch(setMessage("המוצר נוסף לעגלה"));
-
   };
 
   return (
     <div className="products-container">
-    <div className="products-header">
-  <h1>המוצרים שלנו</h1>
+      <div className="products-header">
+        <h1>המוצרים שלנו</h1>
 
-  <div className="filter-container">
-    <label htmlFor="categorySelect">בחר קטגוריה:</label>
-    <select
-      id="categorySelect"
-      className="category-select"
-      onChange={handleCategoryChange}
-      value={category}
-    >
-      <option value="">כל הקטגוריות</option>
-      <option value="מעורב">מעורב</option>
-      <option value="יחודי">יחודי</option>
-      <option value="ורדים">ורדים</option>
-      <option value="מתנה">מתנה</option>
-      <option value="מיוחד">מיוחד</option>
-    </select>
-  </div>
-</div>
+        <div className="filter-container">
+          <label htmlFor="categorySelect">בחר קטגוריה:</label>
+          <select
+            id="categorySelect"
+            className="category-select"
+            onChange={handleCategoryChange}
+            value={category}
+          >
+            <option value="">כל הקטגוריות</option>
+            <option value="מעורב">מעורב</option>
+            <option value="יחודי">יחודי</option>
+            <option value="ורדים">ורדים</option>
+            <option value="מתנה">מתנה</option>
+            <option value="מיוחד">מיוחד</option>
+          </select>
+        </div>
+      </div>
 
       <br />
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -104,7 +112,8 @@ const Products: FC = () => {
         ))}
       </div>
 
-      {data?.pages && page < data.pages && (
+      {/* כפתור טען עוד */}
+      {!loading && products.length > 0 && (
         <button className="load-more-btn" title="טען עוד" onClick={handleLoadMore}>
           <svg
             className="arrow-icon"
