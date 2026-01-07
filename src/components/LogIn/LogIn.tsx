@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
-import { api } from '../../api/apis';
+import { getUserByEmail } from '../../api/apis';
 import './LogIn.scss';
 
 const LogIn: FC = () => {
@@ -22,7 +22,7 @@ const LogIn: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const users = await api.getUserByEmail(values.email);
+        const users = await getUserByEmail(values.email);
         if (!users.length) {
           setError("המשתמש לא קיים במערכת, יש להרשם");
           setTimeout(() => navigate('/sign_up'), 2000);
