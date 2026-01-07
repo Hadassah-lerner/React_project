@@ -3,11 +3,11 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/users", (req, res) => {
+app.get("/api/users", (req, res) => {
   res.send("GET users");
 });
 
-app.post("/users", (req, res) => {
+app.post("/api/users", (req, res) => {
   res.send("POST users");
 });
 
