@@ -4,7 +4,7 @@ import { getProductById, updateProduct } from '../../apis/apis';
 import './Product.scss';
 
 interface ProductModel {
-  id: string;       // תמיד string
+  id: string; // תמיד string
   name: string;
   category: string;
   price: number;
