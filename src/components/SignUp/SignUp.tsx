@@ -8,15 +8,6 @@ import { addUser } from '../../apis/apis';
 import './SignUp.scss';
 import { UserModel } from '../../models/UserModel';
 
-// טיפוס המשתמש שה־Redux מצפה לו
-/*interface UserModel {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}*/
-
 const SignUp: FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -45,47 +36,37 @@ const SignUp: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
- /*       const createdUserFromApi = await addUser({
+        // קריאה ל-API ליצירת משתמש
+        const createdUserFromApi = await addUser({
           name: values.name,
           email: values.email,
           password: values.password,
           role: 'customer',
-        });*/
+        });
+
+        // המרה ל-UserModel לפי מה ש-Redux מצפה לו
         const createdUser = new UserModel(
-  createdUserFromApi.id.toString(),
-  createdUserFromApi.name,
-  createdUserFromApi.email,
-  createdUserFromApi.password,
-  createdUserFromApi.role ?? 'customer'
-);
+          createdUserFromApi.id.toString(),
+          createdUserFromApi.name,
+          createdUserFromApi.email,
+          createdUserFromApi.password,
+          createdUserFromApi.role ?? 'customer'
+        );
 
+        // שמירה ב-Redux
+        dispatch(currUser(createdUser));
 
-       onSubmit: async (values) => {
-  try {
-    const createdUserFromApi = await addUser({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      role: 'customer',
-    });
+        // סימולציה של token
+        sessionStorage.setItem('my-token', 'smile');
 
-    const createdUser = new UserModel(
-      createdUserFromApi.id.toString(),
-      createdUserFromApi.name,
-      createdUserFromApi.email,
-      createdUserFromApi.password,
-      createdUserFromApi.role ?? 'customer'
-    );
-
-    dispatch(currUser(createdUser));
-    sessionStorage.setItem('my-token', 'smile');
-    navigate('/home');
-
-  } catch (err) {
-    console.error(err);
-    setError("אירעה שגיאה בהרשמה, נסה שוב");
-  }
-}
+        // מעבר לדף הבית
+        navigate('/home');
+      } catch (err) {
+        console.error(err);
+        setError("אירעה שגיאה בהרשמה, נסה שוב");
+      }
+    },
+  });
 
   return (
     <div className="container">
