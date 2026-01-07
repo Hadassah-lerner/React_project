@@ -6,6 +6,7 @@ import { useFetch } from '../../custom_hook/useFetch';
 import { clearProduct } from '../../redux/slices/productSlice';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import './DeleteProduct.scss';
+import { api } from '../../api/apis';
 
 
 const Products: FC = () => {
@@ -26,9 +27,10 @@ useEffect(() => {
 
   const deleteProduct = async (product: ProductModel) => {
     try {
-      const response = await fetch(`http://localhost:3000/products/${product.id}`, {
+      const response = await api.deleteProduct(product.id);
+     /*   fetch(`http://localhost:3000/products/${product.id}`, {
         method: 'DELETE',
-      });
+      });*/
 
       if (!response.ok) {
         throw new Error('מחיקת המוצר נכשלה מהשרת');
