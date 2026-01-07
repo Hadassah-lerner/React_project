@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
-import { getUserByEmail } from '../../api/apis';
+import { getUserByEmail } from '../../apis/apis';
 import './LogIn.scss';
 
 const LogIn: FC = () => {
