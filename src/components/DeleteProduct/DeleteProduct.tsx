@@ -6,8 +6,7 @@ import { useFetch } from '../../custom_hook/useFetch';
 import { clearProduct } from '../../redux/slices/productSlice';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import './DeleteProduct.scss';
-import { deleteProduct } from '../../apis/apis';
-
+import { deleteProductById } from '../../apis/apis';
 
 const Products: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
@@ -27,7 +26,7 @@ useEffect(() => {
 
   const deleteProduct = async (product: ProductModel) => {
     try {
-      const response = await deleteProduct(product.id);
+      const response = await deleteProductById(product.id);
      /*   fetch(`http://localhost:3000/products/${product.id}`, {
         method: 'DELETE',
       });*/
