@@ -18,14 +18,12 @@ const Product: FC = () => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState({ name: '', category: '', price: 0, image: '' });
   const [error, setError] = useState('');
-  const fetched = await getProductById(id);
-  const updated = await updateProduct(product.id, formData);
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) return;
       try {
-        const fetched = await api.getProductById(id);
+        const fetched = await getProductById(id);
         setProduct(fetched);
         setFormData(fetched);
       } catch {
@@ -43,7 +41,7 @@ const Product: FC = () => {
   const handleSave = async () => {
     if (!product) return;
     try {
-      const updatedProduct = await api.updateProduct(product.id, formData);
+      const updatedProduct = await updateProduct(product.id, formData);
       setProduct(updatedProduct);
       setEditable(false);
     } catch {
