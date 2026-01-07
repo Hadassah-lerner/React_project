@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import './AddNewProduct.scss';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
+import { api } from '../../api/apis';
 
 interface AddNewProductProps {}
 
@@ -30,13 +31,14 @@ const AddNewProduct: FC<AddNewProductProps> = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await fetch('http://localhost:3000/products', {
+       /* const response = await fetch('http://localhost:3000/products', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(values),
-        });
+        });*/
+        const response = await api.addProduct(values);
         if (response.ok) dispatch(setMessage("המוצר נוסף לרשימת המוצרים"));
 
         if (!response.ok) throw new Error('נכשלה ההכנסה');
