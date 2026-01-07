@@ -1,7 +1,7 @@
 import { ProductModel } from '../models/ProductModel';
 import { UserModel } from '../models/UserModel';
 
-const BASE_URL = "https://13.48.55.220:3001";
+const BASE_URL = "/api";
 
 /* ===================== PRODUCTS ===================== */
 
