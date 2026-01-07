@@ -1,16 +1,21 @@
-export class UserModel { 
-       id!:string 
-       name!:string
-       email!:string
-       password!:string
-       role: userFromApi.role ?? 'customer',
+export class UserModel {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
 
-  constructor() {
-  this.id = ''
-  this.name = ''
-  this.email = ''
-  this.password = ''
-  role: userFromApi.role || 'customer',
+  constructor(
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    role: string = 'customer' // ברירת מחדל
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.role = role;
   }
-
 }
