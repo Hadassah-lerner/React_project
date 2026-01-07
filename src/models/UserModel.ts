@@ -10,7 +10,7 @@ export class UserModel {
   this.name = ''
   this.email = ''
   this.password = ''
-  this.role = 'customer'
+  role: userFromApi.role || 'customer',
   }
 
 }
