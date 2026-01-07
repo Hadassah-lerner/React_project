@@ -1,4 +1,3 @@
-// src/components/Product/Product.tsx
 import React, { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateProduct } from '../../apis/apis';
