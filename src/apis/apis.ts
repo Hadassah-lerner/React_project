@@ -6,8 +6,39 @@
 const BASE_URL = "https://13.48.55.220:3001";
 
 // ===================== TYPES =====================
+import { ProductModel } from '../models/ProductModel';
+import { UserModel } from '../models/UserModel';
 
-export interface Product {
+export const getProducts = async (): Promise<ProductModel[]> => {
+  const res = await fetch('...');
+  const data = await res.json();
+
+  return data.map(
+    (p: any) =>
+      new ProductModel(
+        p.id,
+        p.name,
+        p.category,
+        p.price,
+        p.image
+      )
+  );
+};
+
+export const getProductById = async (id: string): Promise<ProductModel> => {
+  const res = await fetch(`.../${id}`);
+  const p = await res.json();
+
+  return new ProductModel(
+    p.id,
+    p.name,
+    p.category,
+    p.price,
+    p.image
+  );
+};
+
+/*export interface Product {
   id: string;
   name: string;
   category: string;
@@ -29,7 +60,7 @@ export interface Review {
   userId: string;
   content: string;
   rating: number;
-}
+}*/
 
 // ===================== PRODUCTS =====================
 
