@@ -7,18 +7,36 @@ import { currUser } from '../../redux/slices/userSlice';
 import { addUser } from '../../apis/apis';
 import './SignUp.scss';
 
+// טיפוס המשתמש שה־Redux מצפה לו
+interface UserModel {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
 const SignUp: FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState<string>('');
 
   const validationSchema = yup.object({
-    name: yup.string().required('יש להזין שם').min(2).matches(/^[^0-9]+$/, 'אותיות בלבד'),
+    name: yup.string()
+      .required('יש להזין שם')
+      .min(2, 'השם חייב להיות לפחות 2 תווים')
+      .matches(/^[^0-9]+$/, 'אותיות בלבד'),
     email: yup.string().required('יש להזין מייל').email('כתובת לא תקינה'),
-    password: yup.string().required('יש להזין סיסמה').min(8)
-      .matches(/[A-Z]/, 'חובה אות גדולה').matches(/[a-z]/, 'חובה אות קטנה')
-      .matches(/\d/, 'חובה ספרה').matches(/[@$!%*?&]/, 'חובה תו מיוחד'),
-    confirmPassword: yup.string().oneOf([yup.ref('password')], 'הסיסמאות אינן תואמות')
+    password: yup.string()
+      .required('יש להזין סיסמה')
+      .min(8, 'הסיסמה חייבת להיות לפחות 8 תווים')
+      .matches(/[A-Z]/, 'חובה אות גדולה')
+      .matches(/[a-z]/, 'חובה אות קטנה')
+      .matches(/\d/, 'חובה ספרה')
+      .matches(/[@$!%*?&]/, 'חובה תו מיוחד'),
+    confirmPassword: yup.string()
+      .oneOf([yup.ref('password')], 'הסיסמאות אינן תואמות')
+      .required('יש לאמת סיסמה'),
   });
 
   const formik = useFormik({
@@ -26,15 +44,27 @@ const SignUp: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-     const createdUser = await addUser({
-  name: values.name,
-  email: values.email,
-  password: values.password,
-  role: 'customer',
-});
+        const createdUserFromApi = await addUser({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          role: 'customer',
+        });
+
+        // המרה ל־UserModel
+        const createdUser: UserModel = {
+          id: createdUserFromApi.id.toString(), // תמיד string
+          name: createdUserFromApi.name,
+          email: createdUserFromApi.email,
+          password: createdUserFromApi.password,
+          role: createdUserFromApi.role,
+        };
+
         dispatch(currUser(createdUser));
-        navigate('/');
-      } catch {
+        sessionStorage.setItem('my-token', 'smile');
+        navigate('/home');
+      } catch (err) {
+        console.error(err);
         setError("אירעה שגיאה בהרשמה, נסה שוב");
       }
     },
@@ -45,6 +75,7 @@ const SignUp: FC = () => {
       <div className="form">
         <form onSubmit={formik.handleSubmit}>
           <h1>Sign Up</h1>
+
           <label>שם</label>
           <input {...formik.getFieldProps('name')} />
           {formik.touched.name && formik.errors.name && <div className="text-danger">{formik.errors.name}</div>}
