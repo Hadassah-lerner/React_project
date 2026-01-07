@@ -58,7 +58,7 @@ const DeleteProduct: FC = () => {
               <td>{p.category}</td>
               <td>₪{p.price}</td>
               <td>
-                <button onClick={() => deleteProductHandler(p.id)}>מחק</button>
+                <button onClick={() => deleteProductHandler(p.id.toString())}>מחק</button>
               </td>
             </tr>
           ))}
