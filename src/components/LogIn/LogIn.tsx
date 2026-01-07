@@ -1,4 +1,3 @@
-// src/components/LogIn/LogIn.tsx
 import React, { FC, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
