@@ -1,138 +1,175 @@
 import React, { FC, useEffect, useState } from 'react';
-import './Products.scss';
-import { useNavigate } from 'react-router-dom';
-import { ProductModel } from '../../models/ProductModel';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { addProduct } from '../../redux/slices/shoppingCartSlice';
-import { useDispatch } from 'react-redux';
-import { setMessage } from '../../redux/slices/systemMessageSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import './Product.scss';
+import { ReviewModel } from '../../models/ReviewModel';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { api } from '../../api/apis';
+import { setMessage } from '../../redux/slices/systemMessageSlice';
 
-const Products: FC = () => {
-  const [products, setProducts] = useState<ProductModel[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [category, setCategory] = useState<string>(''); // קטגוריה נבחרת
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+interface ProductProps {}
 
-  const dispatch = useDispatch();
+const Product: FC<ProductProps> = () => {
+  const [reviews, setReviews] = useState<ReviewModel[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const product = location.state.product;
+  const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.user.userState);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // -------------------- פונקציה לטעינת מוצרים --------------------
+  // -------------------- פונקציה לטעינת חוות דעת --------------------
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchReviews = async () => {
       setLoading(true);
       try {
-        const response = await api.getProducts(page, 20, category);
-        if (!response.ok) throw new Error('שגיאה בטעינת מוצרים');
-        const data: ProductModel[] = await response.json();
-
-        if (page === 1) {
-          setProducts(data); // עמוד ראשון - איפוס המוצרים
-        } else {
-          setProducts(prev => [...prev, ...data]); // עמוד נוסף - הצמדה למוצרים קיימים
-        }
-
-        setError('');
+        const response = await api.getReviewsByProductId(product.id);
+        if (!response.ok) throw new Error('שגיאה בטעינת חוות דעת');
+        const data: ReviewModel[] = await response.json();
+        setReviews(data);
       } catch (err: any) {
         console.error(err);
-        setError(err.message || 'שגיאה בטעינת מוצרים');
+        setError(err.message || 'שגיאה בטעינת חוות דעת');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, [page, category]);
+    fetchReviews();
+  }, [product.id]);
 
-  // -------------------- שינוי קטגוריה --------------------
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCategory(e.target.value);
-    setPage(1); // איפוס עמוד כששינו קטגוריה
-  };
+  // -------------------- הוספת חוות דעת --------------------
+  const validationSchema = yup.object().shape({
+    comment: yup.string().required('יש להזין תגובה').min(2, 'לפחות 2 תווים'),
+    rating: yup.number().required('יש להזין דירוג').min(1).max(5),
+  });
 
-  // -------------------- טעינת עוד מוצרים --------------------
-  const handleLoadMore = () => {
-    setPage(prev => prev + 1);
-  };
+  const formik = useFormik({
+    initialValues: { comment: '', rating: 1 },
+    validationSchema,
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const newReview: ReviewModel = {
+          productId: product.id,
+          userId: user?.id || 'guest-' + Math.floor(Math.random() * 10000),
+          comment: values.comment,
+          rating: values.rating,
+        };
+        const response = await api.addReview(newReview);
+        if (!response.ok) throw new Error('שליחת חוות הדעת נכשלה');
+        const createdReview = await response.json();
+        setReviews(prev => [...prev, createdReview]);
+        dispatch(setMessage("חוות הדעת נוספה בהצלחה"));
+        resetForm();
+        setError('');
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || 'שגיאה בשליחת חוות הדעת');
+      }
+    },
+  });
 
-  // -------------------- הוספה לעגלה --------------------
-  const addToCart = (product: ProductModel) => {
+  const addToCartHandler = () => {
     dispatch(addProduct(product));
     dispatch(setMessage("המוצר נוסף לעגלה"));
   };
 
+  const deleteReviewHandler = async (reviewId: string | number) => {
+    try {
+      const response = await api.deleteReview(reviewId);
+      if (!response.ok) throw new Error('מחיקת חוות הדעת נכשלה');
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      dispatch(setMessage('חוות הדעת נמחקה'));
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || 'שגיאה במחיקת חוות הדעת');
+    }
+  };
+
   return (
-    <div className="products-container">
-      <div className="products-header">
-        <h1>המוצרים שלנו</h1>
-
-        <div className="filter-container">
-          <label htmlFor="categorySelect">בחר קטגוריה:</label>
-          <select
-            id="categorySelect"
-            className="category-select"
-            onChange={handleCategoryChange}
-            value={category}
-          >
-            <option value="">כל הקטגוריות</option>
-            <option value="מעורב">מעורב</option>
-            <option value="יחודי">יחודי</option>
-            <option value="ורדים">ורדים</option>
-            <option value="מתנה">מתנה</option>
-            <option value="מיוחד">מיוחד</option>
-          </select>
-        </div>
-      </div>
-
-      <br />
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading && (
-        <div className="spinner-container">
-          <div className="spinner"></div>
-          <p>טוען מוצרים...</p>
-        </div>
-      )}
-
-      <div className="products-grid">
-        {products.map((product) => (
-          <div className="product-card" key={product.id}>
-            <div
-              className="helf-product-card"
-              onClick={() => navigate('/product', { state: { product } })}
-            >
-              <img src={product.image} alt={product.name} />
-              <h3>{product.name}</h3>
-              <p>קטגוריה: {product.category}</p>
-              <p>מחיר: ₪{product.price}</p>
-            </div>
-            <button className="add-to-cart-btn" onClick={() => addToCart(product)}>
-              הוסף לסל
+    <div className="Product">
+      <div className="container-fluid product-details-page">
+        <div className="product-and-review">
+          <div className="product-card-mini">
+            <button className="close-btn" onClick={() => navigate('/products')}>
+              ✕
             </button>
+            <h1 className="product-title">{product.name}</h1>
+            <img src={product.image} alt={product.name} className="product-image" />
+            <div className="product-info">
+              <p><strong>קטגוריה:</strong> {product.category}</p>
+              <p><strong>מחיר:</strong> ₪{product.price}</p>
+              <button className="add-to-cart-btn" onClick={addToCartHandler}>
+                הוסף לסל
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* כפתור טען עוד */}
-      {!loading && products.length > 0 && (
-        <button className="load-more-btn" title="טען עוד" onClick={handleLoadMore}>
-          <svg
-            className="arrow-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-      )}
+          <div className="review-panel">
+            <h4 className="review-title">חוות דעת</h4>
+            {loading && <p>טוען חוות דעת...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            {reviews.map((review) => (
+              <div className="review-card" key={review.id}>
+                <div className="review-stars">
+                  {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                </div>
+                <p className="review-comment">{review.comment}</p>
+                {user?.id && review.userId === user.id && (
+                  <button className="add-to-cart-btn" onClick={() => deleteReviewHandler(review.id)}>
+                    מחק
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {user?.role === 'customer' && (
+              <div className="add-review-container">
+                <h5 className="add-review-title">הוסף חוות דעת</h5>
+                <form className="add-review-form" onSubmit={formik.handleSubmit}>
+                  <div className="add-review-field">
+                    <label>תגובה</label>
+                    <input
+                      type="text"
+                      name="comment"
+                      value={formik.values.comment}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.comment && formik.errors.comment && (
+                      <div className="add-review-error">{formik.errors.comment}</div>
+                    )}
+                  </div>
+
+                  <div className="add-review-field">
+                    <label>דירוג (1-5)</label>
+                    <input
+                      type="number"
+                      name="rating"
+                      min={1}
+                      max={5}
+                      value={formik.values.rating}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.rating && formik.errors.rating && (
+                      <div className="add-review-error">{formik.errors.rating}</div>
+                    )}
+                  </div>
+
+                  <button type="submit" className="add-review-submit">הוסף חוות דעת</button>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Products;
+export default Product;
