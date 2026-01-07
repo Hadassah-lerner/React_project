@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProductById, updateProduct } from '../../api/apis';
+import { getProductById, updateProduct } from '../../apis/apis';;
 import './Product.scss';
 
 interface Product {
