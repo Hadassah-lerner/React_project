@@ -47,13 +47,13 @@ const LogIn: FC = () => {
         }
 
         // המרה ל־UserModel
-        const user: UserModel = {
-          id: userFromApi.id.toString(), // תמיד string
-          name: userFromApi.name,
-          email: userFromApi.email,
-          role: userFromApi.role,
-          password: userFromApi.password,
-        };
+const user = new UserModel(
+  userFromApi.id.toString(),
+  userFromApi.name,
+  userFromApi.email,
+  userFromApi.password,
+  userFromApi.role ?? 'customer'
+);
 
         sessionStorage.setItem('my-token', 'smile');
         dispatch(currUser(user));
