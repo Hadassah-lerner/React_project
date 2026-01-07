@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { currUser } from '../../redux/slices/userSlice';
-import { updateUser } from '../../api/apis';
+import { updateUser } from '../../apis/apis';
 import './PersonalInfo.scss';
 
 const PersonalInfo: FC = () => {
