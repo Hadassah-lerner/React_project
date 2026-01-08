@@ -1,79 +1,96 @@
-import { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getProducts } from "../../apis/productsApi";
-import { ProductModel } from "../../models/ProductModel";
-import ProductCard from "../Product/ProductCard";
-import "./Products.scss";
+import ProductCard from '../ProductCard/ProductCard';
+import './Products.scss';
+import { ProductModel } from '../../models/ProductModel';
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
 
-const Products: FC = () => {
+const Products: React.FC = () => {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<ProductModel[]>([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-  const [category, setCategory] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadProducts(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
+  const [category, setCategory] = useState('all');
 
   const loadProducts = async (reset = false) => {
     setLoading(true);
     try {
-      const data = await getProducts(page, PAGE_SIZE, category);
-
-      setProducts(prev =>
-        reset ? data.data : [...prev, ...data.data]
-      );
-      setPages(data.pages);
+      const result = await getProducts(page, PAGE_SIZE, category); 
+      // result צריך להיות { data, pages, items }
+      setProducts(prev => reset ? result.data : [...prev, ...result.data]);
+      setPages(result.pages);
     } catch (err) {
-      console.error("Failed to load products", err);
+      console.error('Error loading products', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    loadProducts();
+  useEffect(() => {
+    setPage(1);
+    loadProducts(true);
+  }, [category]);
+
+  const handleLoadMore = () => {
+    if (page < pages) {
+      setPage(prev => prev + 1);
+    }
   };
 
-  const changeCategory = (cat?: string) => {
-    setProducts([]);
-    setPage(1);
-    setCategory(cat);
-  };
+  // טוען עמוד חדש כש-page משתנה
+  useEffect(() => {
+    if (page > 1) loadProducts();
+  }, [page]);
 
   return (
     <div className="products-container">
-      <h1>המוצרים שלנו</h1>
+      <h2>מוצרים</h2>
 
-      {/* קטגוריות */}
-      <div className="categories">
-        <button onClick={() => changeCategory(undefined)}>הכל</button>
-        <button onClick={() => changeCategory("ורדים")}>ורדים</button>
-        <button onClick={() => changeCategory("סחלבים")}>סחלבים</button>
-        <button onClick={() => changeCategory("זרי כלה")}>זרי כלה</button>
+      <div className="category-select">
+        <label>קטגוריה:</label>
+        <select value={category} onChange={e => setCategory(e.target.value)}>
+          <option value="all">כל הקטגוריות</option>
+          <option value="flowers">פרחים</option>
+          <option value="plants">צמחים</option>
+          <option value="gifts">מתנות</option>
+        </select>
       </div>
 
-      {/* רשימת מוצרים */}
-      <div className="products-grid">
-      {products.map(product => (
-  <ProductCard key={product.id} product={product} />
-))}
-      </div>
+      {loading && page === 1 ? (
+        <div className="spinner">טוען...</div>
+      ) : (
+        <div className="products-grid">
+          {products.map(product => (
+            <div key={product.id} className="product-card-wrapper">
+              <div
+                className="product-card"
+                onClick={() => navigate('/product', { state: { product } })}
+              >
+                <img src={product.image} alt={product.name} />
+                <h3>{product.name}</h3>
+                <p>{product.price} ₪</p>
+              </div>
+              <button
+                className="add-to-cart-btn"
+                onClick={() => console.log('Add to cart', product)}
+              >
+                הוסף לסל
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-
-      {/* טעינה */}
-      {loading && <p>טוען...</p>}
-
-      {/* טען עוד */}
-      {!loading && page < pages && (
-        <button className="load-more" onClick={loadMore}>
-          טען עוד
-        </button>
+      {page < pages && (
+        <div className="load-more-container">
+          <button onClick={handleLoadMore} disabled={loading}>
+            {loading ? 'טוען...' : 'טען עוד'}
+          </button>
+        </div>
       )}
     </div>
   );
