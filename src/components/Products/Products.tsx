@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProducts } from "../../apis/productsApi";
-import ProductCard from '../ProductCard/ProductCard';
+import ProductCard from '../Product/ProductCard';
 import './Products.scss';
 import { ProductModel } from '../../models/ProductModel';
 
