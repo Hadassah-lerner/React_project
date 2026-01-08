@@ -47,7 +47,7 @@ const Products: FC = () => {
   };
 
   return (
-    <div className="products-page">
+    <div className="products-container">
       <h1>המוצרים שלנו</h1>
 
       {/* קטגוריות */}
