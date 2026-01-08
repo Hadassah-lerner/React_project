@@ -2,7 +2,7 @@ import { FC } from "react";
 import { ProductModel } from "../../models/ProductModel";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addProduct, deleteProduct } from '../../slices/shoppingCartSlice';
+import { addProduct, deleteProduct } from '../../redux/slices/shoppingCartSlice';
 
 interface Props {
   product: ProductModel;
