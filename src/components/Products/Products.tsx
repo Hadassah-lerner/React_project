@@ -1,64 +1,79 @@
-import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setMessage } from '../../redux/slices/systemMessageSlice';
-import { ProductModel } from '../../models/ProductModel';
-import { getProducts, deleteProductById } from '../../apis/apis';
-import './Products.scss';
+import { FC, useEffect, useState } from "react";
+import { getProducts } from "../../api/productsApi";
+import { ProductModel } from "../../models/ProductModel";
+import Product from "../Product/Product";
+import "./Products.scss";
+
+const PAGE_SIZE = 6;
 
 const Products: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
-  const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [category, setCategory] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchProducts();
-  }, []);
+    loadProducts(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
 
-  const deleteProductHandler = async (id: string | number) => {
+  const loadProducts = async (reset = false) => {
+    setLoading(true);
     try {
-      await deleteProductById(id.toString()); // תמיד להמיר למחרוזת
-      setProducts(prev => prev.filter(p => p.id !== id));
-      dispatch(setMessage("המוצר נמחק מרשימת המוצרים"));
+      const data = await getProducts(page, PAGE_SIZE, category);
+
+      setProducts(prev =>
+        reset ? data.data : [...prev, ...data.data]
+      );
+      setPages(data.pages);
     } catch (err) {
-      console.error(err);
-      alert("אירעה שגיאה במחיקת המוצר");
+      console.error("Failed to load products", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadProducts();
+  };
+
+  const changeCategory = (cat?: string) => {
+    setProducts([]);
+    setPage(1);
+    setCategory(cat);
+  };
+
   return (
-    <div className="manage-products-container">
+    <div className="products-page">
       <h1>המוצרים שלנו</h1>
-      <table className="manage-products-table">
-        <thead>
-          <tr>
-            <th>תמונה</th>
-            <th>שם</th>
-            <th>קטגוריה</th>
-            <th>מחיר</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map(p => (
-            <tr key={p.id}>
-              <td><img src={p.image} alt={p.name} width={60} /></td>
-              <td>{p.name}</td>
-              <td>{p.category}</td>
-              <td>₪{p.price}</td>
-              <td>
-                <button onClick={() => deleteProductHandler(p.id)}>מחק</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      {/* קטגוריות */}
+      <div className="categories">
+        <button onClick={() => changeCategory(undefined)}>הכל</button>
+        <button onClick={() => changeCategory("ורדים")}>ורדים</button>
+        <button onClick={() => changeCategory("סחלבים")}>סחלבים</button>
+        <button onClick={() => changeCategory("זרי כלה")}>זרי כלה</button>
+      </div>
+
+      {/* רשימת מוצרים */}
+      <div className="products-grid">
+        {products.map(product => (
+          <Product key={product.id} product={product} />
+        ))}
+      </div>
+
+      {/* טעינה */}
+      {loading && <p>טוען...</p>}
+
+      {/* טען עוד */}
+      {!loading && page < pages && (
+        <button className="load-more" onClick={loadMore}>
+          טען עוד
+        </button>
+      )}
     </div>
   );
 };
