@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { getProducts } from "../../apis/productsApi";
 import { ProductModel } from "../../models/ProductModel";
-import Product from "../Product/Product";
+import ProductCard from "../Product/ProductCard";
 import "./Products.scss";
 
 const PAGE_SIZE = 6;
