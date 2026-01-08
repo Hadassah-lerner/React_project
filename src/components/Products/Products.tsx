@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { getProducts } from "../../api/productsApi";
+import { getProducts } from "../../apis/productsApi";
 import { ProductModel } from "../../models/ProductModel";
 import Product from "../Product/Product";
 import "./Products.scss";
