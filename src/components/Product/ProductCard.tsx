@@ -23,9 +23,9 @@ const ProductCard: FC<Props> = ({ product }) => {
       <h3>{product.name}</h3>
       <p>{product.price} ₪</p>
 
-      <button onClick={() => dispatch(addToCart(product))}>
-        הוסף לסל
-      </button>
+<button onClick={() => dispatch(addProduct(product))}>
+  הוסף לסל
+</button>
     </div>
   );
 };
