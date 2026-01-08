@@ -60,10 +60,11 @@ const Products: FC = () => {
 
       {/* רשימת מוצרים */}
       <div className="products-grid">
-        {products.map(product => (
-          <Product key={product.id} product={product} />
-        ))}
+      {products.map(product => (
+  <ProductCard key={product.id} product={product} />
+))}
       </div>
+
 
       {/* טעינה */}
       {loading && <p>טוען...</p>}
