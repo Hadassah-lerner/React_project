@@ -1,0 +1,55 @@
+.manage-products-table {
+  width: 100%;
+  max-width: 1200px; /* שולטים על הרוחב המקסימלי */
+  margin: 40px auto; /* ממרכז את הטבלה בעמוד */
+  border-collapse: collapse;
+  direction: rtl; /* הופך את הכיוון לימין לשמאל */
+  background-color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1.1rem;
+}
+
+.manage-products-table thead {
+  background-color: #f2f2f2;
+}
+
+.manage-products-table th, .manage-products-table td {
+  padding: 20px 30px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.manage-products-table th {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.manage-products-table tbody tr:hover {
+  background-color: #fafafa;
+  transition: background-color 0.3s;
+}
+
+.manage-products-table img {
+  max-width: 80px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.delete-product-btn {
+  background-color: #9d5d32;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-product-btn:hover {
+  background-color: #9d5d32;
+}
