@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   return (
     <div className="grid">
       <figure className="effect-catagories" onClick={()=>navigate('/products')}>
-        <img src="/images/duOzhOEcXvMHAbVoNsCThfRIxbkgQuInXzCBmYyEuYilTKnUqHGwAUzgwhAwMoGr.jpeg" alt="home_pic" />
+        <img src="/images/image.png" alt="home_pic" />
         <figcaption>
           <h3>
             למוצרים שלנו

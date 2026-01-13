@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { currUser } from '../../redux/slices/userSlice';
+import { createUser } from '../../apis/users.api';
 
 interface SignUpProps {}
 
@@ -55,26 +56,13 @@ const SignUp: FC<SignUpProps> = () => {
           role: "customer"
         };
 
-        const response = await fetch(`http://localhost:3000/users`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newCustomer),
-        });
-
-        if (!response.ok) {
-          throw new Error("נכשלה ההרשמה");
-        }
-
-        // פה אנחנו מושכים את היוזר שנוצר מהשרת
-        const createdUser = await response.json();
+       const createdUser = await createUser(newCustomer);
 
         // דוחפים לרידקס
         dispatch(currUser(createdUser));
 
-        // עוברים לעמוד הראשי
-        navigate('/');
+        // ניווט לעמוד הבית
+        navigate('/home');
 
       } catch (err) {
         setError("אירעה שגיאה בהרשמה, נסה שוב");

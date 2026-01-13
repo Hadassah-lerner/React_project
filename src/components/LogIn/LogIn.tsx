@@ -3,15 +3,18 @@ import './LogIn.scss';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { UserModel } from '../../models/UserModel';
-import { currUser } from '../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
+import { currUser } from '../../redux/slices/userSlice';
+import { getUserByEmail } from '../../apis/users.api';
 
 const LogIn: FC = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState<string>('');
   const dispatch = useDispatch();
 
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 💡 schema של yup
   const validationSchema = yup.object().shape({
     email: yup
       .string()
@@ -27,26 +30,32 @@ const LogIn: FC = () => {
     initialValues: { email: '', password: '' },
     validationSchema,
     onSubmit: async (values) => {
+      setError('');
+      setLoading(true);
       try {
-      const response = await fetch(`http://localhost:3000/users?email=${values.email}`);
-const users = await response.json();
+        const user = await getUserByEmail(values.email);
+        if (!user) {
+          setError('...המשתמש לא קיים במערכת, יש להרשם');
+          setTimeout(() => navigate('/sign_up'), 2000);
+          setLoading(false);
+          return;
+        }
 
-if (users.length == 0) {
-  setError("...המשתמש לא קיים במערכת, יש להרשם ");
-  setTimeout(() => navigate('/sign_up'), 2000);
-} else {
-  const user = users[0];
-  if (user.password !== values.password) {
-    setError("הסיסמה שגויה");
-  } else {
-    sessionStorage.setItem('my-token', 'smile');
-    navigate('/home');
-    dispatch(currUser(user))
-  }
-}
+        if (user.password !== values.password) {
+          setError('הסיסמה שגויה');
+          setLoading(false);
+          return;
+        }
 
-      } catch (err) {
-        setError("שגיאה בחיבור לשרת");
+        // התחברות מוצלחת
+        sessionStorage.setItem('my-token', 'smile');
+        dispatch(currUser(user));
+        navigate('/home');
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || 'שגיאה בחיבור לשרת');
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -85,13 +94,14 @@ if (users.length == 0) {
             <div className="text-danger">{formik.errors.password}</div>
           )}
 
-          <input type="submit" value="Login" />
+          <button type="submit" disabled={loading}>
+            {loading ? 'טוען...' : 'Login'}
+          </button>
 
           {error && <div className="text-danger">{error}</div>}
 
           <label id="forgotpwd">
-            לא רשום?
-            <a onClick={() => navigate('/sign_up')}> הרשמה</a>
+            לא רשום? <a onClick={() => navigate('/sign_up')}>הרשמה</a>
           </label>
         </form>
       </div>

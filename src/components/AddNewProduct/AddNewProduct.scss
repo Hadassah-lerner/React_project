@@ -1,8 +1,8 @@
 .add-form-page {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding: 3rem;
   background: #f9f4ef;
   min-height: 100vh;
 }
@@ -14,35 +14,17 @@
   width: 100%;
   max-width: 420px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  position: relative;
   text-align: center;
-}
-
-.add-form-card__close {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
 }
 
 .add-form-card__title {
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   font-weight: bold;
 }
 
-.add-form-card__image {
-  max-width: 80%;
-  max-height: 200px;
-  object-fit: contain;
-  margin: 1rem auto;
-}
-
 .add-form-card__field {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
   text-align: right;
 
   label {
@@ -57,19 +39,19 @@
     border: 1px solid #ccc;
     border-radius: 1rem;
     font-size: 1rem;
+    display: block;
   }
 }
 
-.add-form-card__summary {
-  margin: 1.5rem 0;
-  font-size: 1.1rem;
-
-  p {
-    margin: 0.25rem 0;
-  }
-
-  strong {
-    color: #444;
+.add-form-card__preview {
+  margin-bottom: 1.5rem;
+  img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto;
   }
 }
 
@@ -77,7 +59,7 @@
   background-color: #a00050;
   color: #fff;
   border: none;
-  padding: 0.7rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   font-size: 1rem;
   border-radius: 2rem;
   cursor: pointer;

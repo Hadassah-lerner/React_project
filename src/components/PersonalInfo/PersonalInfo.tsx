@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { currUser } from '../../redux/slices/userSlice';
+import { updateUser } from '../../apis/users.api';
 
 interface PersonalInfoProps {}
 
-const PersonalInfo: FC = () => {
+const PersonalInfo: FC<PersonalInfoProps> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');
@@ -49,7 +50,7 @@ const PersonalInfo: FC = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const newCustomer = {
+        const updatedUser = {
           id: user?.id || 0,
           name: values.name,
           email: values.email,
@@ -57,26 +58,15 @@ const PersonalInfo: FC = () => {
           role: user?.role || 'customer',
         };
 
-        const response = await fetch(`http://localhost:3000/users/${user.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newCustomer),
-        });
-
-        if (!response.ok) {
-          throw new Error("נכשלה ההרשמה");
-        }
+ const res = await updateUser(user.id, updatedUser); 
 
         sessionStorage.setItem('my-token', 'smile');
+        dispatch(currUser(updatedUser));
         navigate('/home');
-        dispatch(currUser(newCustomer));
-
-      } catch (err) {
-        setError("אירעה שגיאה בהרשמה, נסה שוב");
+      } catch {
+        setError("אירעה שגיאה בעדכון, נסה שוב");
       }
-    }
+    },
   });
 
   return (
@@ -123,6 +113,7 @@ const PersonalInfo: FC = () => {
           {formik.touched.password && formik.errors.password && (
             <div className="text-danger">{formik.errors.password as string}</div>
           )}
+
           <label htmlFor="confirmPassword">אימות סיסמה</label>
           <input
             id="confirmPassword"
@@ -135,6 +126,7 @@ const PersonalInfo: FC = () => {
           {formik.touched.confirmPassword && formik.errors.confirmPassword && (
             <div className="text-danger">{formik.errors.confirmPassword as string}</div>
           )}
+
           <input type="submit" value="עדכן" />
           {error && <div className="text-danger">{error}</div>}
         </form>
@@ -144,7 +136,3 @@ const PersonalInfo: FC = () => {
 };
 
 export default PersonalInfo;
-function deleteUser(newCustomer: { id: any; name: any; email: any; password: any; role: any; }): any {
-  throw new Error('Function not implemented.');
-}
-

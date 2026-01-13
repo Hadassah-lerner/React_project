@@ -1,151 +1,119 @@
-import React, { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import './AddNewProduct.scss';
+import axios from '../../apis/axios';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
+import './AddNewProduct.scss';
 
-interface AddNewProductProps {}
-
-const AddNewProduct: FC<AddNewProductProps> = () => {
+const AddNewProduct: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  const [errorMessage, setErrorMessage] = useState<string>('');
-
-  const validationSchema = yup.object().shape({
-    name: yup.string().required('יש להזין שם'),
-    category: yup.string().required('יש להזין קטגוריה'),
-    price: yup.number().typeError('יש להזין מספר חוקי').required('יש להזין מחיר'),
-    image: yup.string().required('יש להכניס תמונה'),
-  });
+  const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [preview, setPreview] = useState<string | null>(null);
 
   const formik = useFormik({
-    initialValues: {
-      name: '',
-      category: '',
-      price: '',
-      image: '',
-    },
-    validationSchema,
+    initialValues: { name: '', category: '', price: '', image: null as File | null },
+    validationSchema: yup.object({
+      name: yup.string().required('יש להזין שם'),
+      category: yup.string().required('יש לבחור קטגוריה'),
+      price: yup.number().required('יש להזין מחיר'),
+      image: yup.mixed().required('יש להעלות תמונה'),
+    }),
     onSubmit: async (values) => {
       try {
-        const response = await fetch('http://localhost:3000/products', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
+        const formData = new FormData();
+        formData.append('name', values.name);
+        formData.append('category', values.category);
+        formData.append('price', String(values.price));
+        if (values.image) formData.append('image', values.image);
+
+        const res = await axios.post('http://localhost:3001/api/products', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
-        if (response.ok) dispatch(setMessage("המוצר נוסף לרשימת המוצרים"));
 
-        if (!response.ok) throw new Error('נכשלה ההכנסה');
-
-        sessionStorage.setItem('my-token', 'smile');
+        dispatch(setMessage('המוצר נוסף בהצלחה'));
         navigate('/products');
-      } catch {
-        setErrorMessage('אירעה שגיאה בהכנסת המוצר, נסה שוב');
+      } catch (err) {
+        console.error(err);
+        setErrorMessage('אירעה שגיאה בהכנסת המוצר');
       }
     },
   });
 
+  // Preview של התמונה לפני שליחה
+  useEffect(() => {
+    if (!formik.values.image) return setPreview(null);
+    const objectUrl = URL.createObjectURL(formik.values.image);
+    setPreview(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [formik.values.image]);
+
   return (
-    <div className="add-form-page" dir="rtl">
-      <form className="add-form-card" onSubmit={formik.handleSubmit}>
-        <button
-          type="button"
-          className="add-form-card__close"
-          onClick={() => navigate('/products')}
-        >
-          ✕
-        </button>
+    <div className="add-form-page">
+      <div className="add-form-card">
+        <h2 className="add-form-card__title">הוסף מוצר חדש</h2>
 
-        <h2 className="add-form-card__title">
-          {formik.values.name || 'מוצר חדש'}
-        </h2>
-
-        {formik.values.image && (
-          <img
-            src={formik.values.image}
-            alt="product"
-            className="add-form-card__image"
-          />
+        {/* Preview של התמונה */}
+        {preview && (
+          <div className="add-form-card__preview">
+            <img src={preview} alt="preview" />
+          </div>
         )}
 
-        
- <div className="add-form-card__field">
-  <label>תמונה:</label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(event) => {
-      const file = event.currentTarget.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          formik.setFieldValue('image', reader.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    }}
-  />
-  {formik.touched.image && formik.errors.image && (
-    <div className="add-form-card__error">{formik.errors.image}</div>
-  )}
-</div>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="add-form-card__field">
+            <label>שם מוצר</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="שם מוצר"
+              onChange={formik.handleChange}
+              value={formik.values.name}
+            />
+            {formik.errors.name && <div className="add-form-card__error">{formik.errors.name}</div>}
+          </div>
 
+          <div className="add-form-card__field">
+            <label>קטגוריה</label>
+            <input
+              type="text"
+              name="category"
+              placeholder="קטגוריה"
+              onChange={formik.handleChange}
+              value={formik.values.category}
+            />
+            {formik.errors.category && <div className="add-form-card__error">{formik.errors.category}</div>}
+          </div>
 
-        <div className="add-form-card__field">
-          <label>שם:</label>
-          <input
-            name="name"
-            type="text"
-            placeholder="שם המוצר"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.name && formik.errors.name && (
-            <div className="add-form-card__error">{formik.errors.name}</div>
-          )}
-        </div>
+          <div className="add-form-card__field">
+            <label>מחיר</label>
+            <input
+              type="number"
+              name="price"
+              placeholder="מחיר"
+              onChange={formik.handleChange}
+              value={formik.values.price}
+            />
+            {formik.errors.price && <div className="add-form-card__error">{formik.errors.price}</div>}
+          </div>
 
-        <div className="add-form-card__field">
-          <label>קטגוריה:</label>
-          <input
-            name="category"
-            type="text"
-            placeholder="קטגוריה"
-            value={formik.values.category}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.category && formik.errors.category && (
-            <div className="add-form-card__error">{formik.errors.category}</div>
-          )}
-        </div>
+          <div className="add-form-card__field">
+            <label>תמונה</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => e.target.files && formik.setFieldValue('image', e.target.files[0])}
+            />
+            {formik.errors.image && <div className="add-form-card__error">{formik.errors.image}</div>}
+          </div>
 
-        <div className="add-form-card__field">
-          <label>מחיר:</label>
-          <input
-            name="price"
-            type="number"
-            placeholder="מחיר"
-            value={formik.values.price}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.price && formik.errors.price && (
-            <div className="add-form-card__error">{formik.errors.price}</div>
-          )}
-        </div>
+          {errorMessage && <div className="add-form-card__error">{errorMessage}</div>}
 
-        <button type="submit" className="add-form-card__submit">
-          הוסף מוצר
-        </button>
-
-        {errorMessage && <div className="add-form-card__error">{errorMessage}</div>}
-      </form>
+          <button type="submit" className="add-form-card__submit">הוסף מוצר</button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,13 @@
+.delete-products-container {
+  padding: 20px;
+  direction: rtl;
+}
+
 .manage-products-table {
   width: 100%;
-  max-width: 1200px; /* שולטים על הרוחב המקסימלי */
-  margin: 40px auto; /* ממרכז את הטבלה בעמוד */
+  max-width: 1200px;
+  margin: 40px auto;
   border-collapse: collapse;
-  direction: rtl; /* הופך את הכיוון לימין לשמאל */
   background-color: #fff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
@@ -16,7 +20,8 @@
   background-color: #f2f2f2;
 }
 
-.manage-products-table th, .manage-products-table td {
+.manage-products-table th,
+.manage-products-table td {
   padding: 20px 30px;
   border-bottom: 1px solid #eee;
   text-align: center;
@@ -36,7 +41,7 @@
 .manage-products-table img {
   max-width: 80px;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .delete-product-btn {
@@ -51,5 +56,11 @@
 }
 
 .delete-product-btn:hover {
-  background-color: #9d5d32;
+  background-color: #7c4320;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
 }

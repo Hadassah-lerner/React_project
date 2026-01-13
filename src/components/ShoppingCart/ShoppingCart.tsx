@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ProductModel } from '../../models/ProductModel';
 import { deleteProduct } from '../../redux/slices/shoppingCartSlice';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
+import { getImageSrc } from '../../utils/getImageSrc';
 
 const ShoppingCart: React.FC = () => {
 const cartItems: ProductModel[] = useSelector((state: any) => state.shoppingCart.productList)
@@ -28,7 +29,7 @@ const dispatch = useDispatch();
 <ul className="cart-items">
   {cartItems.map((item) => (
     <li className="cart-card" key={item.id}>
-      <img src={item.image} alt={item.name} className="cart-thumbnail" />
+      <img src={getImageSrc(item.image)} alt={item.name} className="cart-thumbnail" />
       
       <div className="cart-info">
         <div className="cart-title">{item.name}</div>

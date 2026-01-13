@@ -1,87 +1,86 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ProductModel } from '../../models/ProductModel';
 import { useDispatch } from 'react-redux';
-import { useFetch } from '../../custom_hook/useFetch';
+import { ProductModel } from '../../models/ProductModel';
 import { clearProduct } from '../../redux/slices/productSlice';
 import { setMessage } from '../../redux/slices/systemMessageSlice';
 import './DeleteProduct.scss';
+import { useFetch } from '../../custom_hook/useFetch';
+import { getImageSrc } from '../../utils/getImageSrc';
 
-
-const Products: FC = () => {
+const DeleteProduct: FC = () => {
   const [products, setProducts] = useState<ProductModel[]>([]);
-  const [page, setPage] = useState<number>(1);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-const baseUrl = `http://localhost:3000/products`;
-const { data, loading, error } = useFetch<ProductModel[]>(baseUrl);
+  const baseUrl = 'http://localhost:3001/api/products?page=1&limit=1000';
 
-useEffect(() => {
-  if (data) {
-    console.log('מוצרים שהתקבלו מהשרת:', data);
-    setProducts(data);
-  }
-}, [data]);
+  const { data, loading, error } = useFetch<{ data: ProductModel[]; meta: any }>(baseUrl);
 
+  useEffect(() => {
+    if (data) setProducts(data.data);
+  }, [data]);
 
   const deleteProduct = async (product: ProductModel) => {
-    try {
-      const response = await fetch(`http://localhost:3000/products/${product.id}`, {
-        method: 'DELETE',
-      });
+    const confirmDelete = window.confirm(`למחוק את המוצר "${product.name}"?`);
+    if (!confirmDelete) return;
 
-      if (!response.ok) {
-        throw new Error('מחיקת המוצר נכשלה מהשרת');
-      }
-      setProducts(prevProducts => prevProducts.filter(p => p.id !== product.id));
+    try {
+      const res = await fetch(`http://localhost:3001/api/products/${product.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('מחיקת המוצר נכשלה מהשרת');
+
+      setProducts(prev => prev.filter(p => p.id !== product.id));
       dispatch(clearProduct());
-      if (response.ok) dispatch(setMessage("המוצר נמחק מרשימת המוצרים"));
-    } catch (error: any) {
-      console.error('שגיאה במחיקת מוצר:', error.message);
-      alert('אירעה שגיאה במחיקת המוצר');
+      dispatch(setMessage(`המוצר "${product.name}" נמחק בהצלחה`));
+    } catch (err: any) {
+      console.error('שגיאה במחיקת מוצר:', err.message);
+      dispatch(setMessage(`אירעה שגיאה במחיקת המוצר "${product.name}"`));
     }
   };
 
   return (
-    <div className="manage-products-container">
-      <h1>המוצרים שלנו</h1>
-      <br />
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading && (
-        <div className="spinner-container">
-          <div className="spinner"></div>
-          <p>טוען מוצרים...</p>
-        </div>
-      )}
+    <div className="delete-products-container">
+      <h1>ניהול מוצרים</h1>
 
-<table className="manage-products-table">
-  <thead>
-    <tr>
-      <th>תמונה</th>
-      <th>שם</th>
-      <th>קטגוריה</th>
-      <th>מחיר</th>
-      <th>פעולות</th>
-    </tr>
-  </thead>
-  <tbody>
-    {products.map(product => (
-      <tr key={product.id}>
-        <td><img src={product.image} alt={product.name} width="60"/></td>
-        <td>{product.name}</td>
-        <td>{product.category}</td>
-        <td>₪{product.price}</td>
-        <td>
-          <button className="delete-product-btn" onClick={() => deleteProduct(product)}>
-             מחק
-          </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+      {error && <p className="error-text">{error}</p>}
+      {loading && <p>טוען מוצרים...</p>}
+
+      <div className="table-responsive">
+        <table className="manage-products-table">
+          <thead>
+            <tr>
+              <th>תמונה</th>
+              <th>שם</th>
+              <th>קטגוריה</th>
+              <th>מחיר</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id}>
+                <td>
+                  <img src={getImageSrc(p.image)} alt={p.name} />
+                </td>
+                <td>{p.name}</td>
+                <td>{p.category}</td>
+                <td>₪{p.price}</td>
+                <td>
+                  <button className="delete-product-btn" onClick={() => deleteProduct(p)}>
+                    מחק
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {products.length === 0 && !loading && (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center' }}>
+                  אין מוצרים להצגה
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default Products;
+export default DeleteProduct;
